@@ -9,8 +9,8 @@ async function run(): Promise<void> {
 
     const branchPrefix = core.getInput('BRANCH_PREFIX', {required: false})
 
-    const regex = RegExp(`^${branchPrefix}[0-9]+-.*$`)
-    if (!regex.test(branchName)) {
+    const regex = RegExp(`^${branchPrefix?.toLowerCase()}[0-9]+-.*$`)
+    if (!regex.test(branchName.toLowerCase())) {
       core.debug(`Branch name is not lead by a number followed by a dash`)
       return
     }
