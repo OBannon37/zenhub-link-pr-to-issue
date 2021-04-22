@@ -3,11 +3,6 @@ import {context} from '@actions/github'
 import {linkPrToIssue} from './zenhub'
 
 async function run(): Promise<void> {
-  core.info('context1')
-  console.log('context2')
-  console.log('context3')
-  core.info(JSON.stringify(context, null, 2))
-
   try {
     const branchName: string = context.payload.pull_request!.head.ref
     core.info(`Branch name: ${branchName}`)
@@ -16,7 +11,7 @@ async function run(): Promise<void> {
 
     const regex = RegExp(`^${branchPrefix?.toLowerCase()}[0-9]+-.*$`)
     if (!regex.test(branchName.toLowerCase())) {
-      core.debug(`Branch name is not lead by a number followed by a dash`)
+      core.error(`Branch name is not lead by a number followed by a dash`)
       return
     }
 
@@ -25,42 +20,39 @@ async function run(): Promise<void> {
       prefixLength,
       branchName.indexOf('-')
     )
-    core.debug(`Issue number: ${issueNumber}`)
+    core.info(`Issue number: ${issueNumber}`)
 
     const prNumber: number = context.payload.pull_request!.number
-    core.debug(`PR number: ${prNumber}`)
+    core.info(`PR number: ${prNumber}`)
 
     const prRepoId: number = context.payload.pull_request!.head.repo.id
-    core.debug(`PR repo id: ${prRepoId}`)
+    core.info(`PR repo id: ${prRepoId}`)
 
     const zenhubToken = core.getInput('ZENHUB_TOKEN', {required: true})
-    await linkPrToIssue(
+    const res = await linkPrToIssue(
       prRepoId,
       issueNumber,
       prRepoId,
       prNumber,
       zenhubToken
-    ).then(res => {
-      const prRepoName = context.payload.pull_request!.head.repo.full_name
+    )
 
-      if (res === 'ok') {
-        core.debug(
-          `Linked PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}`
-        )
-        return
-      } else if (res === 'not-found') {
-        core.debug(
-          `Issue number ${issueNumber} does not exist in ${prRepoName}`
-        )
-        return
-      } else {
-        throw new Error(
-          `Failed to link PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}: ${res.message}`
-        )
-      }
-    })
+    const prRepoName = context.payload.pull_request!.head.repo.full_name
+
+    if (res === 'ok') {
+      core.info(
+        `Linked PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}`
+      )
+      return
+    } else if (res === 'not-found') {
+      core.error(`Issue number ${issueNumber} does not exist in ${prRepoName}`)
+      return
+    } else {
+      throw new Error(
+        `Failed to link PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}: ${res.message}`
+      )
+    }
   } catch (error) {
-    core.error('Error')
     core.setFailed(error.message)
   }
 }

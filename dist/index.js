@@ -2809,44 +2809,38 @@ const github_1 = __webpack_require__(469);
 const zenhub_1 = __webpack_require__(305);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info('context1');
-        console.log('context2');
-        console.log('context3');
-        core.info(JSON.stringify(github_1.context, null, 2));
         try {
             const branchName = github_1.context.payload.pull_request.head.ref;
             core.info(`Branch name: ${branchName}`);
             const branchPrefix = core.getInput('BRANCH_PREFIX', { required: false });
             const regex = RegExp(`^${branchPrefix === null || branchPrefix === void 0 ? void 0 : branchPrefix.toLowerCase()}[0-9]+-.*$`);
             if (!regex.test(branchName.toLowerCase())) {
-                core.debug(`Branch name is not lead by a number followed by a dash`);
+                core.error(`Branch name is not lead by a number followed by a dash`);
                 return;
             }
             const prefixLength = (branchPrefix === null || branchPrefix === void 0 ? void 0 : branchPrefix.length) || 0;
             const issueNumber = branchName.substring(prefixLength, branchName.indexOf('-'));
-            core.debug(`Issue number: ${issueNumber}`);
+            core.info(`Issue number: ${issueNumber}`);
             const prNumber = github_1.context.payload.pull_request.number;
-            core.debug(`PR number: ${prNumber}`);
+            core.info(`PR number: ${prNumber}`);
             const prRepoId = github_1.context.payload.pull_request.head.repo.id;
-            core.debug(`PR repo id: ${prRepoId}`);
+            core.info(`PR repo id: ${prRepoId}`);
             const zenhubToken = core.getInput('ZENHUB_TOKEN', { required: true });
-            yield zenhub_1.linkPrToIssue(prRepoId, issueNumber, prRepoId, prNumber, zenhubToken).then(res => {
-                const prRepoName = github_1.context.payload.pull_request.head.repo.full_name;
-                if (res === 'ok') {
-                    core.debug(`Linked PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}`);
-                    return;
-                }
-                else if (res === 'not-found') {
-                    core.debug(`Issue number ${issueNumber} does not exist in ${prRepoName}`);
-                    return;
-                }
-                else {
-                    throw new Error(`Failed to link PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}: ${res.message}`);
-                }
-            });
+            const res = yield zenhub_1.linkPrToIssue(prRepoId, issueNumber, prRepoId, prNumber, zenhubToken);
+            const prRepoName = github_1.context.payload.pull_request.head.repo.full_name;
+            if (res === 'ok') {
+                core.info(`Linked PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}`);
+                return;
+            }
+            else if (res === 'not-found') {
+                core.error(`Issue number ${issueNumber} does not exist in ${prRepoName}`);
+                return;
+            }
+            else {
+                throw new Error(`Failed to link PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}: ${res.message}`);
+            }
         }
         catch (error) {
-            core.error('Error');
             core.setFailed(error.message);
         }
     });
