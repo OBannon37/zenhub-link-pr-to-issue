@@ -2809,6 +2809,10 @@ const github_1 = __webpack_require__(469);
 const zenhub_1 = __webpack_require__(305);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        core.info('context1');
+        console.log('context2');
+        console.log(github_1.context);
+        core.info(JSON.stringify(github_1.context, null, 2));
         try {
             const branchName = github_1.context.payload.pull_request.head.ref;
             core.debug(`Branch name: ${branchName}`);
@@ -2842,6 +2846,7 @@ function run() {
             });
         }
         catch (error) {
+            core.error('Error');
             core.setFailed(error.message);
         }
     });

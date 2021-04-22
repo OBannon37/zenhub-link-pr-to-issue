@@ -3,6 +3,11 @@ import {context} from '@actions/github'
 import {linkPrToIssue} from './zenhub'
 
 async function run(): Promise<void> {
+  core.info('context1')
+  console.log('context2')
+  console.log(context)
+  core.info(JSON.stringify(context, null, 2))
+
   try {
     const branchName: string = context.payload.pull_request!.head.ref
     core.debug(`Branch name: ${branchName}`)
@@ -55,6 +60,7 @@ async function run(): Promise<void> {
       }
     })
   } catch (error) {
+    core.error('Error')
     core.setFailed(error.message)
   }
 }
