@@ -2811,11 +2811,11 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         core.info('context1');
         console.log('context2');
-        console.log(github_1.context);
+        console.log('context3');
         core.info(JSON.stringify(github_1.context, null, 2));
         try {
             const branchName = github_1.context.payload.pull_request.head.ref;
-            core.debug(`Branch name: ${branchName}`);
+            core.info(`Branch name: ${branchName}`);
             const branchPrefix = core.getInput('BRANCH_PREFIX', { required: false });
             const regex = RegExp(`^${branchPrefix === null || branchPrefix === void 0 ? void 0 : branchPrefix.toLowerCase()}[0-9]+-.*$`);
             if (!regex.test(branchName.toLowerCase())) {

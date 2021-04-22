@@ -5,7 +5,7 @@ import {linkPrToIssue} from './zenhub'
 async function run(): Promise<void> {
   core.info('context1')
   console.log('context2')
-  console.log(context)
+  console.log('context3')
   core.info(JSON.stringify(context, null, 2))
 
   try {
