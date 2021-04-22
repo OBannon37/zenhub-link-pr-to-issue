@@ -10,7 +10,7 @@ async function run(): Promise<void> {
 
   try {
     const branchName: string = context.payload.pull_request!.head.ref
-    core.debug(`Branch name: ${branchName}`)
+    core.info(`Branch name: ${branchName}`)
 
     const branchPrefix = core.getInput('BRANCH_PREFIX', {required: false})
 
