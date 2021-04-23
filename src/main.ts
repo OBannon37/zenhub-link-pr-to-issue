@@ -36,8 +36,8 @@ async function run(): Promise<void> {
       prNumber,
       zenhubToken
     )
-    core.info('response: ');
-    core.info(JSON.stringify(res, null, 2));
+    core.info('response: ')
+    core.info(JSON.stringify(res, null, 2))
 
     const prRepoName = context.payload.pull_request!.head.repo.full_name
 
@@ -50,7 +50,7 @@ async function run(): Promise<void> {
       core.error(`Issue number ${issueNumber} does not exist in ${prRepoName}`)
       return
     } else {
-      core.error(JSON.stringify(res, null, 2));
+      core.error(JSON.stringify(res, null, 2))
       throw new Error(
         `Failed to link PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}: ${res.message}`
       )

@@ -2827,6 +2827,8 @@ function run() {
             core.info(`PR repo id: ${prRepoId}`);
             const zenhubToken = core.getInput('ZENHUB_TOKEN', { required: true });
             const res = yield zenhub_1.linkPrToIssue(prRepoId, issueNumber, prRepoId, prNumber, zenhubToken);
+            core.info('response: ');
+            core.info(JSON.stringify(res, null, 2));
             const prRepoName = github_1.context.payload.pull_request.head.repo.full_name;
             if (res === 'ok') {
                 core.info(`Linked PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}`);
@@ -2837,6 +2839,7 @@ function run() {
                 return;
             }
             else {
+                core.error(JSON.stringify(res, null, 2));
                 throw new Error(`Failed to link PR ${prRepoName}#${prNumber} to issue ${prRepoName}#${issueNumber}: ${res.message}`);
             }
         }
