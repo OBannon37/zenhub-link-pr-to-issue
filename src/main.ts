@@ -36,6 +36,7 @@ async function run(): Promise<void> {
       prNumber,
       zenhubToken
     )
+    core.info(JSON.stringify(res, null, 2));
 
     const prRepoName = context.payload.pull_request!.head.repo.full_name
 
