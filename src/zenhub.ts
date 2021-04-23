@@ -31,6 +31,7 @@ export async function linkPrToIssue(
         return 'ok'
       },
       reason => {
+        console.error(reason)
         return reason.message === 'Not found'
           ? 'not-found'
           : {message: reason.message}

@@ -5668,6 +5668,7 @@ function linkPrToIssue(issueRepoId, issueNumber, prRepoId, prNumber, token) {
             .then(_ => {
             return 'ok';
         }, reason => {
+            console.error(reason);
             return reason.message === 'Not found'
                 ? 'not-found'
                 : { message: reason.message };
